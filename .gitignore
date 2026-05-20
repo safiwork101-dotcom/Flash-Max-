@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+.env*
+.npm-cache
+.tools
+.next-config
+.vercel
+*.log

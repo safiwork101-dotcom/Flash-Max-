@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: flash-max
+    runtime: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: REVIEWS_ADMIN_KEY
+        generateValue: true
+      - key: DATA_DIR
+        value: /var/data
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+    disk:
+      name: flash-max-data
+      mountPath: /var/data
+      sizeGB: 1
