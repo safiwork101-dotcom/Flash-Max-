@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  background: #020506;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(0, 216, 255, 0.11), transparent 30rem),
+    radial-gradient(circle at 85% 78%, rgba(47, 244, 177, 0.09), transparent 28rem),
+    linear-gradient(180deg, #020506 0%, #04090b 45%, #020506 100%);
+  color: #eefcff;
+}
+
+body::before {
+  pointer-events: none;
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    radial-gradient(circle, rgba(0, 216, 255, 0.34) 0 1.5px, transparent 1.6px),
+    radial-gradient(circle, rgba(183, 255, 90, 0.22) 0 1px, transparent 1.1px);
+  background-position:
+    0 0,
+    42px 58px;
+  background-size:
+    190px 190px,
+    260px 260px;
+  opacity: 0.35;
+}
+
+body::after {
+  pointer-events: none;
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(2, 5, 6, 0.15), #020506 96%);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(0, 216, 255, 0.28);
+}
+
+.section-shell {
+  width: min(1120px, calc(100% - 32px));
+  margin-inline: auto;
+}
+
+.glass-card {
+  border: 1px solid rgba(132, 204, 192, 0.16);
+  background: linear-gradient(180deg, rgba(10, 17, 21, 0.88), rgba(5, 10, 13, 0.86));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.aqua-text {
+  color: #00d8ff;
+  text-shadow: 0 0 28px rgba(0, 216, 255, 0.32);
+}
+
+.noise-line {
+  background-image: linear-gradient(90deg, transparent, rgba(0, 216, 255, 0.42), transparent);
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

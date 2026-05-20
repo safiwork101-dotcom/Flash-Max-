@@ -1,0 +1,36 @@
+<svg width="1120" height="470" viewBox="0 0 1120 470" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1120" height="470" rx="28" fill="#050B0E"/>
+  <circle cx="990" cy="84" r="170" fill="#00D8FF" fill-opacity=".08"/>
+  <circle cx="170" cy="410" r="210" fill="#2FF4B1" fill-opacity=".06"/>
+  <rect x="36" y="32" width="1048" height="56" rx="18" fill="#0A1418" stroke="#18333A"/>
+  <rect x="62" y="51" width="118" height="18" rx="9" fill="#00D8FF" fill-opacity=".85"/>
+  <rect x="822" y="48" width="90" height="24" rx="12" fill="#102229"/>
+  <rect x="930" y="48" width="118" height="24" rx="12" fill="#00D8FF"/>
+  <rect x="64" y="124" width="456" height="290" rx="26" fill="#081216" stroke="#173239"/>
+  <text x="94" y="171" font-family="Arial, sans-serif" font-size="18" font-weight="800" fill="#EFFFFF">Order Dashboard</text>
+  <text x="94" y="202" font-family="Arial, sans-serif" font-size="14" fill="#78929A">Editable package, payment, and support preview.</text>
+  <rect x="94" y="235" width="366" height="18" rx="9" fill="#10252B"/>
+  <rect x="94" y="235" width="248" height="18" rx="9" fill="#00D8FF"/>
+  <rect x="94" y="286" width="112" height="82" rx="18" fill="#0D1B20" stroke="#18333A"/>
+  <rect x="226" y="286" width="112" height="82" rx="18" fill="#0D1B20" stroke="#18333A"/>
+  <rect x="358" y="286" width="112" height="82" rx="18" fill="#0D1B20" stroke="#18333A"/>
+  <text x="126" y="332" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#EFFFFF">$25</text>
+  <text x="250" y="332" font-family="Arial, sans-serif" font-size="26" font-weight="900" fill="#EFFFFF">10m</text>
+  <text x="385" y="332" font-family="Arial, sans-serif" font-size="26" font-weight="900" fill="#EFFFFF">24/7</text>
+  <rect x="580" y="124" width="476" height="290" rx="26" fill="#081216" stroke="#173239"/>
+  <text x="612" y="171" font-family="Arial, sans-serif" font-size="18" font-weight="800" fill="#EFFFFF">Payment Instructions</text>
+  <text x="612" y="202" font-family="Arial, sans-serif" font-size="14" fill="#78929A">Token, network, and public wallet details are configurable.</text>
+  <rect x="612" y="232" width="164" height="122" rx="18" fill="#F6FFFF"/>
+  <rect x="632" y="252" width="34" height="34" rx="5" fill="#061014"/>
+  <rect x="722" y="252" width="34" height="34" rx="5" fill="#061014"/>
+  <rect x="632" y="308" width="34" height="34" rx="5" fill="#061014"/>
+  <rect x="682" y="252" width="24" height="16" rx="4" fill="#061014"/>
+  <rect x="682" y="284" width="56" height="14" rx="4" fill="#061014"/>
+  <rect x="708" y="314" width="48" height="14" rx="4" fill="#061014"/>
+  <rect x="812" y="232" width="198" height="34" rx="12" fill="#0D1B20"/>
+  <rect x="812" y="282" width="198" height="34" rx="12" fill="#0D1B20"/>
+  <rect x="812" y="332" width="142" height="34" rx="12" fill="#00D8FF"/>
+  <text x="852" y="255" font-family="Arial, sans-serif" font-size="13" font-weight="800" fill="#EFFFFF">TRC20</text>
+  <text x="852" y="305" font-family="Arial, sans-serif" font-size="13" font-weight="800" fill="#EFFFFF">USDT</text>
+  <text x="844" y="355" font-family="Arial, sans-serif" font-size="13" font-weight="900" fill="#061014">COPY ADDRESS</text>
+</svg>

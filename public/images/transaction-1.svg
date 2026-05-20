@@ -1,0 +1,15 @@
+<svg width="680" height="520" viewBox="0 0 680 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="520" rx="28" fill="#050B0E"/>
+  <rect x="42" y="38" width="596" height="444" rx="24" fill="#0A1418" stroke="#173239"/>
+  <rect x="74" y="72" width="120" height="18" rx="9" fill="#00D8FF"/>
+  <rect x="74" y="116" width="310" height="20" rx="10" fill="#EFFFFF" fill-opacity=".88"/>
+  <rect x="74" y="152" width="438" height="14" rx="7" fill="#78929A" fill-opacity=".56"/>
+  <rect x="74" y="208" width="532" height="74" rx="18" fill="#071014" stroke="#18333A"/>
+  <rect x="102" y="234" width="96" height="22" rx="11" fill="#2FF4B1"/>
+  <rect x="398" y="230" width="172" height="30" rx="15" fill="#10252B"/>
+  <rect x="74" y="306" width="250" height="92" rx="18" fill="#071014" stroke="#18333A"/>
+  <rect x="356" y="306" width="250" height="92" rx="18" fill="#071014" stroke="#18333A"/>
+  <text x="102" y="362" font-family="Arial, sans-serif" font-size="34" font-weight="900" fill="#EFFFFF">$25</text>
+  <text x="384" y="362" font-family="Arial, sans-serif" font-size="34" font-weight="900" fill="#EFFFFF">TRC20</text>
+  <rect x="74" y="428" width="532" height="14" rx="7" fill="#10252B"/>
+</svg>

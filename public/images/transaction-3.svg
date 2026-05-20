@@ -1,0 +1,11 @@
+<svg width="680" height="520" viewBox="0 0 680 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="520" rx="28" fill="#050B0E"/>
+  <rect x="54" y="48" width="572" height="424" rx="24" fill="#0A1418" stroke="#173239"/>
+  <circle cx="340" cy="164" r="66" fill="#2FF4B1" fill-opacity=".14"/>
+  <path d="M307 165L329 187L375 132" stroke="#2FF4B1" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="340" y="278" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#EFFFFF">Confirmation Placeholder</text>
+  <text x="340" y="312" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#78929A">Replace this card with your own original proof image.</text>
+  <rect x="124" y="354" width="432" height="18" rx="9" fill="#10252B"/>
+  <rect x="124" y="396" width="336" height="18" rx="9" fill="#10252B"/>
+  <rect x="124" y="396" width="182" height="18" rx="9" fill="#00D8FF"/>
+</svg>
