@@ -53,7 +53,10 @@ export function GeneratorSection() {
     () => Math.round(amount.price * duration.multiplier),
     [amount.price, duration.multiplier],
   );
-  const paymentAmount = `${totalPrice.toFixed(2)} ${selectedCurrency.symbol}`;
+  const paymentAmount =
+    selectedCurrency.symbol === "BTC"
+      ? `$${totalPrice.toFixed(2)}`
+      : `${totalPrice.toFixed(2)} ${selectedCurrency.symbol}`;
 
   const isAddressValid = validateAddress(address, network.type);
 
