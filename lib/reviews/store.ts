@@ -1,4 +1,5 @@
 import { promises as fs } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 export type StoredReview = {
@@ -12,7 +13,9 @@ export type StoredReview = {
 
 const dataDirectory = process.env.DATA_DIR
   ? path.resolve(process.env.DATA_DIR)
-  : path.join(process.cwd(), "data");
+  : process.env.VERCEL
+    ? path.join(os.tmpdir(), "flash-max-data")
+    : path.join(process.cwd(), "data");
 const reviewsFilePath = path.join(dataDirectory, "reviews.json");
 
 async function ensureReviewsFile() {
