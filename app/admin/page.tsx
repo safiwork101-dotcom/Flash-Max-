@@ -20,6 +20,7 @@ type Order = {
   createdAt: string;
   date: string;
   status: string;
+  depositNotifiedAt?: string;
   amountLabel: string;
   token: string;
   duration: string;
@@ -282,6 +283,14 @@ export default function AdminPage() {
           />
         </div>
 
+        {!hasLoaded ? (
+          <div className="mt-8 rounded-lg border border-line bg-panel/90 p-6 text-sm leading-6 text-white/58">
+            Admin key enter karke <span className="font-black text-mint">Open</span>{" "}
+            press karo. Orders private rahenge aur key ke baghair show nahi
+            honge.
+          </div>
+        ) : null}
+
         <section className="mt-8">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-2xl font-black">Orders</h2>
@@ -296,7 +305,7 @@ export default function AdminPage() {
           </div>
 
           <div className="space-y-4">
-            {orders.length === 0 ? (
+            {hasLoaded && orders.length === 0 ? (
               <EmptyPanel text="Abhi koi order save nahi hua." />
             ) : (
               orders.map((order) => (
@@ -314,12 +323,11 @@ export default function AdminPage() {
                           {order.priceLabel}
                         </span>
                         <span className="rounded-lg border border-line px-3 py-1 text-xs font-black text-white/54">
-                          {order.status.replace("_", " ")}
+                          {formatOrderStatus(order.status)}
                         </span>
                       </div>
                       <p className="mt-2 text-xs text-white/36">
-                        {order.date} -{" "}
-                        {new Date(order.createdAt).toLocaleTimeString()}
+                        {order.date} - {new Date(order.createdAt).toLocaleTimeString()}
                       </p>
                     </div>
 
@@ -347,8 +355,14 @@ export default function AdminPage() {
                       label="Payment"
                       value={`${order.paymentAmount} (${order.paymentCurrencyDisplay})`}
                     />
+                    {order.depositNotifiedAt ? (
+                      <InfoRow
+                        label="Deposit Request"
+                        value={formatTimestamp(order.depositNotifiedAt)}
+                      />
+                    ) : null}
                     <InfoRow
-                      label="Payment Address"
+                      label="Request Sent To"
                       value={shortenAddress(order.paymentAddress)}
                       copyValue={order.paymentAddress}
                       onCopy={copyText}
@@ -365,7 +379,7 @@ export default function AdminPage() {
         <section className="mt-10">
           <h2 className="mb-4 text-2xl font-black">Reviews</h2>
           <div className="space-y-4">
-            {reviews.length === 0 ? (
+            {hasLoaded && reviews.length === 0 ? (
               <EmptyPanel text="Abhi koi review nahi hai." />
             ) : (
               reviews.map((review) => (
@@ -376,9 +390,7 @@ export default function AdminPage() {
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <h3 className="font-black">{review.name}</h3>
-                      <p className="mt-1 text-xs text-white/38">
-                        {review.date}
-                      </p>
+                      <p className="mt-1 text-xs text-white/38">{review.date}</p>
                       <div className="mt-3 flex gap-1">
                         {[1, 2, 3, 4, 5].map((value) => (
                           <Star
@@ -493,4 +505,26 @@ function shortenAddress(address: string) {
   }
 
   return `${address.slice(0, 8)}...${address.slice(-6)}`;
+}
+
+function formatOrderStatus(status: string) {
+  const labels: Record<string, string> = {
+    payment_opened: "Payment opened",
+    deposit_notified: "Deposit request sent",
+    reviewing: "Reviewing",
+    completed: "Completed",
+    cancelled: "Cancelled",
+  };
+
+  return labels[status] ?? status.replaceAll("_", " ");
+}
+
+function formatTimestamp(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleString();
 }
