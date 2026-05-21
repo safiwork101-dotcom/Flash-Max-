@@ -6,7 +6,13 @@ export type StoredOrder = {
   id: string;
   createdAt: string;
   date: string;
-  status: "payment_opened" | "reviewing" | "completed" | "cancelled";
+  status:
+    | "payment_opened"
+    | "deposit_notified"
+    | "reviewing"
+    | "completed"
+    | "cancelled";
+  depositNotifiedAt?: string;
   amountLabel: string;
   token: string;
   duration: string;
@@ -105,6 +111,46 @@ export async function deleteStoredOrder(id: string) {
   const nextOrders = orders.filter((order) => order.id !== id);
   await fs.writeFile(ordersFilePath, JSON.stringify(nextOrders, null, 2), "utf8");
   return nextOrders.length !== orders.length;
+}
+
+export async function notifyStoredOrderDeposit(
+  id: string,
+  input: {
+    paymentCurrencyName: string;
+    paymentCurrencySymbol: string;
+    paymentCurrencyDisplay: string;
+    paymentAmount: string;
+    paymentAddress: string;
+  },
+) {
+  const orders = await readStoredOrders();
+  let updatedOrder: StoredOrder | null = null;
+
+  const nextOrders = orders.map((order) => {
+    if (order.id !== id) {
+      return order;
+    }
+
+    updatedOrder = {
+      ...order,
+      status: "deposit_notified",
+      depositNotifiedAt: new Date().toISOString(),
+      paymentCurrencyName: sanitizeText(input.paymentCurrencyName, 40),
+      paymentCurrencySymbol: sanitizeText(input.paymentCurrencySymbol, 16),
+      paymentCurrencyDisplay: sanitizeText(input.paymentCurrencyDisplay, 24),
+      paymentAmount: sanitizeText(input.paymentAmount, 32),
+      paymentAddress: sanitizeAddress(input.paymentAddress),
+    };
+
+    return updatedOrder;
+  });
+
+  if (!updatedOrder) {
+    return null;
+  }
+
+  await fs.writeFile(ordersFilePath, JSON.stringify(nextOrders, null, 2), "utf8");
+  return updatedOrder;
 }
 
 function sanitizeText(value: string, maxLength: number) {
