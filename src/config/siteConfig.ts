@@ -30,8 +30,8 @@ export const siteConfig = {
     subheadline:
       "Generate a USDT-style demo balance inside your own test interface for layout previews, payment instructions, and order-flow testing.",
     supportLine: "",
-    validityLabel: "Demo notice",
-    validityValue: "25 days remaining",
+    validityLabel: "",
+    validityValue: "",
     previewImage: "/images/hero-preview.svg",
   },
   stats: [
