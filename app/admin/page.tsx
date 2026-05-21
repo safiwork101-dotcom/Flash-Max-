@@ -165,6 +165,52 @@ export default function AdminPage() {
     window.setTimeout(() => setCopied(""), 1400);
   }
 
+  if (!hasLoaded) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-night px-4 py-8 text-white">
+        <div className="w-full max-w-xl rounded-lg border border-line bg-panel/92 p-6 shadow-glow sm:p-8">
+          <p className="mb-3 text-xs font-black tracking-[0.22em] text-white/38">
+            ADMIN PANEL
+          </p>
+          <h1 className="flex items-center gap-3 text-3xl font-black">
+            <ShieldCheck className="size-8 text-mint" />
+            Dashboard Locked
+          </h1>
+          <p className="mt-4 text-sm leading-6 text-white/54">
+            Admin key enter karo. Key verify hone ke baad dashboard, orders,
+            reviews, aur private records show honge.
+          </p>
+
+          <form onSubmit={handleSubmit} className="mt-6 space-y-3">
+            <input
+              value={adminKey}
+              onChange={(event) => setAdminKey(event.target.value)}
+              placeholder="Admin key"
+              type="password"
+              className="h-12 w-full rounded-lg border border-line bg-night/80 px-4 text-sm text-white outline-none focus:border-mint"
+            />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-mint px-5 text-sm font-black text-night transition hover:bg-aqua disabled:opacity-60"
+            >
+              <RefreshCw
+                className={cn("size-4", isLoading ? "animate-spin" : "")}
+              />
+              {isLoading ? "Checking..." : "Open Dashboard"}
+            </button>
+          </form>
+
+          {message ? (
+            <p className="mt-5 rounded-lg border border-line bg-night/70 px-4 py-3 text-sm font-semibold text-white/70">
+              {message}
+            </p>
+          ) : null}
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-night px-4 py-8 text-white">
       <div className="mx-auto w-full max-w-6xl">
@@ -236,14 +282,6 @@ export default function AdminPage() {
           />
         </div>
 
-        {!hasLoaded ? (
-          <div className="mt-8 rounded-lg border border-line bg-panel/90 p-6 text-sm leading-6 text-white/58">
-            Admin key enter karke <span className="font-black text-mint">Open</span>{" "}
-            press karo. Orders private rahenge aur key ke baghair show nahi
-            honge.
-          </div>
-        ) : null}
-
         <section className="mt-8">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-2xl font-black">Orders</h2>
@@ -258,7 +296,7 @@ export default function AdminPage() {
           </div>
 
           <div className="space-y-4">
-            {hasLoaded && orders.length === 0 ? (
+            {orders.length === 0 ? (
               <EmptyPanel text="Abhi koi order save nahi hua." />
             ) : (
               orders.map((order) => (
@@ -280,7 +318,8 @@ export default function AdminPage() {
                         </span>
                       </div>
                       <p className="mt-2 text-xs text-white/36">
-                        {order.date} - {new Date(order.createdAt).toLocaleTimeString()}
+                        {order.date} -{" "}
+                        {new Date(order.createdAt).toLocaleTimeString()}
                       </p>
                     </div>
 
@@ -326,7 +365,7 @@ export default function AdminPage() {
         <section className="mt-10">
           <h2 className="mb-4 text-2xl font-black">Reviews</h2>
           <div className="space-y-4">
-            {hasLoaded && reviews.length === 0 ? (
+            {reviews.length === 0 ? (
               <EmptyPanel text="Abhi koi review nahi hai." />
             ) : (
               reviews.map((review) => (
@@ -337,7 +376,9 @@ export default function AdminPage() {
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <h3 className="font-black">{review.name}</h3>
-                      <p className="mt-1 text-xs text-white/38">{review.date}</p>
+                      <p className="mt-1 text-xs text-white/38">
+                        {review.date}
+                      </p>
                       <div className="mt-3 flex gap-1">
                         {[1, 2, 3, 4, 5].map((value) => (
                           <Star
