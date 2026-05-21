@@ -3,6 +3,9 @@ import { ButtonLink } from "@/components/ButtonLink";
 import { siteConfig } from "@/src/config/siteConfig";
 
 export function HeroSection() {
+  const showValidity =
+    siteConfig.hero.validityLabel && siteConfig.hero.validityValue;
+
   return (
     <section className="relative overflow-hidden pb-8 pt-32 md:pt-36">
       <div className="absolute left-1/2 top-28 h-64 w-64 -translate-x-1/2 rounded-full bg-aqua/10 blur-3xl" />
@@ -18,11 +21,15 @@ export function HeroSection() {
             {siteConfig.hero.subheadline}
           </p>
 
-          <div className="mt-5 flex items-center justify-center gap-2 text-sm font-bold text-white/55">
-            <Clock className="size-4 text-mint" />
-            <span>{siteConfig.hero.validityLabel}:</span>
-            <span className="text-white">{siteConfig.hero.validityValue}</span>
-          </div>
+          {showValidity ? (
+            <div className="mt-5 flex items-center justify-center gap-2 text-sm font-bold text-white/55">
+              <Clock className="size-4 text-mint" />
+              <span>{siteConfig.hero.validityLabel}:</span>
+              <span className="text-white">
+                {siteConfig.hero.validityValue}
+              </span>
+            </div>
+          ) : null}
 
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <ButtonLink href={siteConfig.cta.href} className="w-full sm:w-auto">
@@ -39,7 +46,6 @@ export function HeroSection() {
             </ButtonLink>
           </div>
         </div>
-
       </div>
     </section>
   );
