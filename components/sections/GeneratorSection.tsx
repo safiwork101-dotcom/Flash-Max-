@@ -34,6 +34,9 @@ export function GeneratorSection() {
   const [orderId, setOrderId] = useState("");
   const [orderError, setOrderError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [depositNotified, setDepositNotified] = useState(false);
+  const [isDepositNotifying, setIsDepositNotifying] = useState(false);
+  const [depositNotifyError, setDepositNotifyError] = useState("");
 
   const amount = siteConfig.generator.amountOptions[amountIndex];
   const duration = siteConfig.generator.durations[durationIndex];
@@ -102,6 +105,8 @@ export function GeneratorSection() {
 
       const data = (await response.json()) as { order?: { id?: string } };
       setOrderId(data.order?.id ?? "");
+      setDepositNotified(false);
+      setDepositNotifyError("");
       setIsPaymentOpen(true);
     } catch {
       setOrderError("Order could not be saved. Please try again.");
@@ -114,6 +119,44 @@ export function GeneratorSection() {
     await navigator.clipboard.writeText(selectedPaymentAddress);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
+  }
+
+  async function notifySystemOfDeposit() {
+    if (!orderId || isDepositNotifying) {
+      return;
+    }
+
+    setIsDepositNotifying(true);
+    setDepositNotifyError("");
+
+    try {
+      const paymentCurrencyDisplay =
+        "displaySymbol" in selectedCurrency && selectedCurrency.displaySymbol
+          ? selectedCurrency.displaySymbol
+          : selectedCurrency.symbol;
+
+      const response = await fetch(`/api/orders/${encodeURIComponent(orderId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          paymentCurrencyName: selectedCurrency.name,
+          paymentCurrencySymbol: selectedCurrency.symbol,
+          paymentCurrencyDisplay,
+          paymentAmount,
+          paymentAddress: selectedPaymentAddress,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Request could not be sent.");
+      }
+
+      setDepositNotified(true);
+    } catch {
+      setDepositNotifyError("Request could not be sent. Please try again.");
+    } finally {
+      setIsDepositNotifying(false);
+    }
   }
 
   return (
@@ -352,7 +395,11 @@ export function GeneratorSection() {
                   </p>
                   <SelectBox
                     value={currencyIndex}
-                    onChange={setCurrencyIndex}
+                    onChange={(value) => {
+                      setCurrencyIndex(value);
+                      setDepositNotified(false);
+                      setDepositNotifyError("");
+                    }}
                     options={siteConfig.generator.paymentModal.currencies.map(
                       (currency) =>
                         `${currency.name} (${
@@ -401,6 +448,26 @@ export function GeneratorSection() {
                         : siteConfig.generator.paymentModal.copyLabel}
                     </button>
                   </div>
+                  <button
+                    type="button"
+                    onClick={notifySystemOfDeposit}
+                    disabled={depositNotified || isDepositNotifying || !orderId}
+                    className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-mint bg-mint/10 px-4 text-sm font-black text-mint transition hover:bg-mint hover:text-night disabled:cursor-default disabled:bg-mint disabled:text-night"
+                  >
+                    {depositNotified ? (
+                      <Check className="size-4" />
+                    ) : null}
+                    {depositNotified
+                      ? "Request sent"
+                      : isDepositNotifying
+                        ? "Sending request..."
+                        : "Notify System Of Deposit"}
+                  </button>
+                  {depositNotifyError ? (
+                    <p className="mt-3 rounded-lg border border-coral/30 bg-coral/10 px-4 py-3 text-sm font-semibold text-coral">
+                      {depositNotifyError}
+                    </p>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -518,7 +585,7 @@ function GeneratorInfoBlocks() {
       <div className="border-t border-line py-8 text-center">
         <p className="text-sm font-bold text-white/50">
           {siteConfig.generator.protocolLine}
-          <span className="mx-3 text-white/18">·</span>
+          <span className="mx-3 text-white/18">Â·</span>
           {siteConfig.generator.version}
         </p>
         <p className="mt-3 text-xs text-white/28">
