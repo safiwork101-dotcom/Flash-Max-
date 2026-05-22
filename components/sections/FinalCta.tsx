@@ -15,7 +15,7 @@ export function FinalCta() {
             {siteConfig.finalCta.body}
           </p>
           <div className="mt-8">
-            <ButtonLink href={siteConfig.cta.href}>
+            <ButtonLink href="/#generator">
               <Zap className="size-4" />
               {siteConfig.cta.checkoutLabel}
             </ButtonLink>
