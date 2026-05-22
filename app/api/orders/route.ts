@@ -4,10 +4,12 @@ import { addStoredOrder, readStoredOrders } from "@/lib/orders/store";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const adminSecret = "chotiluli123";
+
 export async function GET(request: Request) {
   const adminKey = request.headers.get("x-admin-key") ?? "";
 
-  if (adminKey !== process.env.REVIEWS_ADMIN_KEY) {
+  if (adminKey !== adminSecret) {
     return NextResponse.json({ error: "Invalid admin key." }, { status: 401 });
   }
 
