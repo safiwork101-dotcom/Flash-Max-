@@ -32,7 +32,7 @@ export function HeroSection() {
           ) : null}
 
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <ButtonLink href={siteConfig.cta.href} className="w-full sm:w-auto">
+            <ButtonLink href="/#generator" className="w-full sm:w-auto">
               <Zap className="size-4" />
               {siteConfig.cta.checkoutLabel}
             </ButtonLink>
