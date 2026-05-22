@@ -4,21 +4,15 @@ import { deleteStoredReview } from "@/lib/reviews/store";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+const adminSecret = "chotiluli123";
+
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const adminKey = process.env.REVIEWS_ADMIN_KEY;
   const providedKey = request.headers.get("x-admin-key");
 
-  if (!adminKey) {
-    return NextResponse.json(
-      { error: "REVIEWS_ADMIN_KEY is not configured." },
-      { status: 500 },
-    );
-  }
-
-  if (!providedKey || providedKey !== adminKey) {
+  if (!providedKey || providedKey !== adminSecret) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
