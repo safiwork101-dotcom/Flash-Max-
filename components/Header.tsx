@@ -4,11 +4,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, Zap } from "lucide-react";
 import { useState } from "react";
-import { ButtonLink } from "@/components/ButtonLink";
 import { siteConfig } from "@/src/config/siteConfig";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+
+  function openGenerator() {
+    setIsOpen(false);
+
+    if (window.location.pathname === "/") {
+      document.getElementById("generator")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      window.history.pushState(null, "", "/#generator");
+      return;
+    }
+
+    window.location.assign("/#generator");
+  }
 
   return (
     <header className="fixed left-0 right-0 top-0 z-40 border-b border-white/[0.03] bg-night/60 backdrop-blur-xl">
@@ -41,10 +55,14 @@ export function Header() {
         </nav>
 
         <div className="hidden md:block">
-          <ButtonLink href={siteConfig.cta.href} className="px-6">
+          <button
+            type="button"
+            onClick={openGenerator}
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-aqua px-6 text-sm font-extrabold text-night shadow-button transition hover:bg-mint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aqua"
+          >
             <Zap className="size-4" />
             {siteConfig.cta.primaryLabel}
-          </ButtonLink>
+          </button>
         </div>
 
         <button
@@ -70,10 +88,14 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
-            <ButtonLink href={siteConfig.cta.href} className="mt-1 w-full">
+            <button
+              type="button"
+              onClick={openGenerator}
+              className="mt-1 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-aqua px-5 text-sm font-extrabold text-night shadow-button transition hover:bg-mint focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-aqua"
+            >
               <Zap className="size-4" />
               {siteConfig.cta.primaryLabel}
-            </ButtonLink>
+            </button>
           </div>
         </div>
       ) : null}
