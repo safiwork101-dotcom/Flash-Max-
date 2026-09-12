@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Menu, X, Zap } from "lucide-react";
 import { useState } from "react";
 import { siteConfig } from "@/src/config/siteConfig";
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   function openGenerator() {
     setIsOpen(false);
@@ -21,7 +23,7 @@ export function Header() {
       return;
     }
 
-    window.location.assign("/#generator");
+    router.push("/#generator");
   }
 
   return (

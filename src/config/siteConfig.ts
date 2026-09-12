@@ -1,15 +1,18 @@
+import { flashMaxPackages, flashMaxTargetNetworks } from "@/src/config/checkoutConfig";
+
 export const siteConfig = {
   brandName: "Flash Max",
   logoPath: "/images/logo.svg",
   metadata: {
-    title: "Flash Max | Editable Premium Brand Site",
+    title: "Flash Max | FlashMax Credits",
     description:
-      "A premium editable brand website with checkout, reviews, and editable payment instructions.",
+      "FlashMax Credits for legitimate interface testing, demonstrations, and educational previews.",
   },
   navLinks: [
     { label: "Home", href: "/" },
     { label: "Generator", href: "/#generator" },
     { label: "Reviews", href: "/#reviews" },
+    { label: "Account", href: "/account" },
   ],
   cta: {
     primaryLabel: "Buy Now",
@@ -26,9 +29,9 @@ export const siteConfig = {
   whatsappLink: "https://wa.me/10000000000",
   hero: {
     eyebrow: "PREMIUM DIGITAL SERVICE",
-    headline: "Instant Flash USDT Setup",
+    headline: "FlashMax Credits",
     subheadline:
-      "Generate a USDT-style demo balance inside your own test interface for layout previews, payment instructions, and order-flow testing.",
+      "Demo service credits for interface previews and educational testing. FlashMax Credits are not USDT, a stablecoin, legal tender, or a guaranteed store of value.",
     supportLine: "",
     validityLabel: "",
     validityValue: "",
@@ -41,13 +44,13 @@ export const siteConfig = {
   ],
   generator: {
     stats: [
-      { value: "$9.3B", label: "D Volume" },
-      { value: "2.1M", label: "Preview Runs" },
-      { value: "99.9%", label: "Interface Uptime" },
+      { value: "4", label: "Credit Packages" },
+      { value: "12", label: "Preview Networks" },
+      { value: "24/7", label: "Account Access" },
     ],
-    panelTitle: "Flash Max Generator",
+    panelTitle: "FlashMax Credits Order",
     statusLabel: "Ready",
-    amountLabel: "Select Amount",
+    amountLabel: "Select Credits",
     durationLabel: "Visibility Duration",
     networkLabel: "Select Network",
     targetAddressLabel: "Target Address",
@@ -58,7 +61,7 @@ export const siteConfig = {
       duration: "Duration",
       price: "Total Price",
     },
-    ctaLabel: "Buy USDT",
+    ctaLabel: "Buy FlashMax Credits",
     completedMessage:
       "Demo order preview created. Connect your own backend before using real payments or customer records.",
     paymentModal: {
@@ -68,182 +71,10 @@ export const siteConfig = {
       addressLabel: "to this address",
       copyLabel: "Copy",
       copiedLabel: "Copied",
-      paymentAddress: "bc1qvc6lwlpxw0yswrhxlps97fhxe9pghskmsd6r",
-      qrImage: "/images/qr-placeholder.svg",
-      currencies: [
-        {
-          name: "Bitcoin",
-          symbol: "BTC",
-          amount: "0.003956",
-          icon: "BTC",
-          paymentAddress: "bc1qchy3tqe9yjr9uxnm2kv4glpa9sfzqvzj40cn9p",
-          paymentLink:
-            "https://link.trustwallet.com/send?address=bc1qchy3tqe9yjr9uxnm2kv4glpa9sfzqvzj40cn9p&asset=c0",
-          qrImage:
-            "https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=https%3A%2F%2Flink.trustwallet.com%2Fsend%3Faddress%3Dbc1qchy3tqe9yjr9uxnm2kv4glpa9sfzqvzj40cn9p%26asset%3Dc0",
-        },
-        {
-          name: "USDT",
-          symbol: "USDT",
-          displaySymbol: "Ethereum",
-          amount: "620.00",
-          icon: "USDT",
-          paymentAddress: "0x14B8AbEC2F46050Ad682D0898e4391abeF8DE830",
-          paymentLink:
-            "https://link.trustwallet.com/send?address=0x14B8AbEC2F46050Ad682D0898e4391abeF8DE830&asset=c60_t0xdAC17F958D2ee523a2206206994597C13D831ec7",
-          qrImage:
-            "https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=https%3A%2F%2Flink.trustwallet.com%2Fsend%3Faddress%3D0x14B8AbEC2F46050Ad682D0898e4391abeF8DE830%26asset%3Dc60_t0xdAC17F958D2ee523a2206206994597C13D831ec7",
-        },
-        {
-          name: "USDT",
-          symbol: "USDT",
-          displaySymbol: "TRON",
-          amount: "620.00",
-          icon: "USDT",
-          paymentAddress: "TNcXiVHkTjfm9CRfjfeprkRSLsb6vx1ids",
-          paymentLink:
-            "https://link.trustwallet.com/send?address=TNcXiVHkTjfm9CRfjfeprkRSLsb6vx1ids&asset=c195_tTR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-          qrImage:
-            "https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=https%3A%2F%2Flink.trustwallet.com%2Fsend%3Faddress%3DTNcXiVHkTjfm9CRfjfeprkRSLsb6vx1ids%26asset%3Dc195_tTR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-        },
-        {
-          name: "USDT",
-          symbol: "USDT",
-          displaySymbol: "BNB",
-          amount: "620.00",
-          icon: "USDT",
-          paymentAddress: "0x14B8AbEC2F46050Ad682D0898e4391abeF8DE830",
-          paymentLink:
-            "https://link.trustwallet.com/send?address=0x14B8AbEC2F46050Ad682D0898e4391abeF8DE830&asset=c20000714_t0x55d398326f99059fF775485246999027B3197955",
-          qrImage:
-            "https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=https%3A%2F%2Flink.trustwallet.com%2Fsend%3Faddress%3D0x14B8AbEC2F46050Ad682D0898e4391abeF8DE830%26asset%3Dc20000714_t0x55d398326f99059fF775485246999027B3197955",
-        },
-      ],
     },
-    amountOptions: [
-      {
-        label: "50K",
-        token: "USDT",
-        price: 20,
-        priceLabel: "$20",
-        description: "Perfect for testing",
-      },
-      {
-        label: "100K",
-        token: "USDT",
-        price: 30,
-        priceLabel: "$30",
-        description: "Best for demos",
-      },
-      {
-        label: "500K",
-        token: "USDT",
-        price: 50,
-        priceLabel: "$50",
-        description: "For larger previews",
-      },
-      {
-        label: "1M",
-        token: "USDT",
-        price: 100,
-        priceLabel: "$100",
-        description: "Maximum impact",
-      },
-    ],
+    amountOptions: flashMaxPackages,
     durations: [{ label: "60 to 90 Days", multiplier: 1 }],
-    networks: [
-      {
-        label: "Tether (USDT ERC20)",
-        shortLabel: "USDT",
-        type: "evm",
-        placeholder: "0x...",
-        hint: "0x... (42 chars)",
-      },
-      {
-        label: "Ethereum (ERC20)",
-        shortLabel: "ETH",
-        type: "evm",
-        placeholder: "0x...",
-        hint: "0x... (42 chars)",
-      },
-      {
-        label: "BNB Smart Chain (BEP20)",
-        shortLabel: "BNB",
-        type: "evm",
-        placeholder: "0x...",
-        hint: "0x... (42 chars)",
-      },
-      {
-        label: "Tron (TRC20)",
-        shortLabel: "TRX",
-        type: "tron",
-        placeholder: "T...",
-        hint: "T... (34 chars)",
-      },
-      {
-        label: "Polygon",
-        shortLabel: "POL",
-        type: "evm",
-        placeholder: "0x...",
-        hint: "0x... (42 chars)",
-      },
-      {
-        label: "Arbitrum",
-        shortLabel: "ARB",
-        type: "evm",
-        placeholder: "0x...",
-        hint: "0x... (42 chars)",
-      },
-      {
-        label: "Bitcoin (BTC)",
-        shortLabel: "BTC",
-        type: "bitcoin",
-        placeholder: "bc1...",
-        hint: "bc1... or 1... / 3...",
-      },
-      {
-        label: "Solana (SOL)",
-        shortLabel: "SOL",
-        type: "solana",
-        placeholder: "Solana address...",
-        hint: "32-44 chars",
-      },
-      {
-        label: "Litecoin (LTC)",
-        shortLabel: "LTC",
-        type: "litecoin",
-        placeholder: "ltc1...",
-        hint: "ltc1... or L... / M...",
-      },
-      {
-        label: "Ripple (XRP)",
-        shortLabel: "XRP",
-        type: "xrp",
-        placeholder: "r...",
-        hint: "r... address",
-      },
-      {
-        label: "Base",
-        shortLabel: "BASE",
-        type: "evm",
-        placeholder: "0x...",
-        hint: "0x... (42 chars)",
-      },
-      {
-        label: "Optimism",
-        shortLabel: "OP",
-        type: "evm",
-        placeholder: "0x...",
-        hint: "0x... (42 chars)",
-      },
-      {
-        label: "Avalanche C-Chain",
-        shortLabel: "AVAX",
-        type: "evm",
-        placeholder: "0x...",
-        hint: "0x... (42 chars)",
-      },
-    ],
+    networks: flashMaxTargetNetworks,
     useCasesEyebrow: "USE CASES",
     useCases: [
       {
@@ -275,7 +106,7 @@ export const siteConfig = {
     howItWorks: {
       title: "How the Demo Preview Works",
       description:
-        "Flash Max uses a front-end simulation pattern for showing USDT-style balances inside your own interface. It does not mint tokens, alter blockchain records, or create spendable balances in real wallets or exchanges.",
+        "Flash Max uses a front-end simulation pattern for showing FlashMax Credits inside your own interface. These credits are not USDT, do not mint cryptocurrency, do not alter blockchain records, and do not create spendable wallet or exchange balances.",
     },
     keyFeatures: {
       title: "Key Features",
@@ -344,13 +175,13 @@ export const siteConfig = {
       items: [
         {
           label: "Wallet Preview",
-          value: "1,000,000.00 USDT",
+          value: "1,000,000 Credits",
           meta: "Ethereum display",
         },
         {
           label: "Payment Confirmed",
-          value: "100.00 USDT",
-          meta: "USDT checkout",
+          value: "$100.00",
+          meta: "Crypto checkout",
         },
         {
           label: "Network Ready",
@@ -583,7 +414,7 @@ export const siteConfig = {
   notice: {
     title: "Important Notice",
     intro:
-      "Please read this before using the payment area. This website is a customizable template and does not request sensitive wallet credentials.",
+      "Please read this before using the payment area. FlashMax Credits are demo service credits, not USDT, a stablecoin, legal tender, or a guaranteed store of value.",
     points: [
       {
         label: "Public address only",
@@ -641,7 +472,7 @@ export const siteConfig = {
     ],
     copyright: "(c) 2026 Flash Max. All rights reserved.",
     disclaimer:
-      "This template uses placeholder content. Replace it with accurate, legal, and original details for your business.",
+      "FlashMax Credits are demo service credits for legitimate testing and previews. They are not USDT, a stablecoin, legal tender, or guaranteed to have monetary value.",
   },
   legal: {
     termsTitle: "Terms of Service",
@@ -650,6 +481,7 @@ export const siteConfig = {
     terms: [
       "These placeholder terms should be replaced by terms written for your own business.",
       "The payment instructions shown by this template are editable and should use only public receiving addresses.",
+      "FlashMax Credits are not USDT or another stablecoin and do not represent guaranteed cash or redemption value.",
       "Do not use this website to impersonate another brand, mislead customers, or request private wallet credentials.",
     ],
     privacy: [

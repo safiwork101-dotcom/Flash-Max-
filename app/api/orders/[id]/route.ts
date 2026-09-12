@@ -1,18 +1,15 @@
 import { NextResponse } from "next/server";
+import { isFlashMaxAdmin } from "@/lib/flashmax/auth";
 import { deleteStoredOrder, notifyStoredOrderDeposit } from "@/lib/orders/store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const adminSecret = "chotiluli123";
-
 export async function DELETE(
   request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
-  const adminKey = request.headers.get("x-admin-key") ?? "";
-
-  if (adminKey !== adminSecret) {
+  if (!isFlashMaxAdmin(request)) {
     return NextResponse.json({ error: "Invalid admin key." }, { status: 401 });
   }
 
@@ -25,6 +22,12 @@ export async function PATCH(
   request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json(
+      { error: "Manual deposit notifications are disabled. Payment status is verified by NOWPayments." },
+      { status: 410 },
+    );
+  }
   const body = (await request.json().catch(() => null)) as
     | {
         paymentCurrencyName?: unknown;

@@ -11,7 +11,8 @@ export function NoticeModal() {
 
   useEffect(() => {
     if (window.localStorage.getItem(storageKey) !== "true") {
-      setIsVisible(true);
+      const frame = window.requestAnimationFrame(() => setIsVisible(true));
+      return () => window.cancelAnimationFrame(frame);
     }
   }, []);
 

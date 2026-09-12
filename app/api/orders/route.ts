@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
+import { isFlashMaxAdmin } from "@/lib/flashmax/auth";
 import { addStoredOrder, readStoredOrders } from "@/lib/orders/store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const adminSecret = "chotiluli123";
-
 export async function GET(request: Request) {
-  const adminKey = request.headers.get("x-admin-key") ?? "";
-
-  if (adminKey !== adminSecret) {
+  if (!isFlashMaxAdmin(request)) {
     return NextResponse.json({ error: "Invalid admin key." }, { status: 401 });
   }
 
@@ -18,6 +15,12 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json(
+      { error: "Legacy order creation is disabled. Use the authenticated Flash Max checkout." },
+      { status: 410 },
+    );
+  }
   const body = (await request.json().catch(() => null)) as
     | {
         amountLabel?: unknown;

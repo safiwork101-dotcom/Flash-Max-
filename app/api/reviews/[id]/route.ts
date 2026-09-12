@@ -1,18 +1,15 @@
 import { NextResponse } from "next/server";
+import { isFlashMaxAdmin } from "@/lib/flashmax/auth";
 import { deleteStoredReview } from "@/lib/reviews/store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const adminSecret = "chotiluli123";
-
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const providedKey = request.headers.get("x-admin-key");
-
-  if (!providedKey || providedKey !== adminSecret) {
+  if (!isFlashMaxAdmin(request)) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 

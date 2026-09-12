@@ -6,9 +6,27 @@ services:
     buildCommand: npm install && npm run build
     startCommand: npm run start
     envVars:
-      - key: REVIEWS_ADMIN_KEY
+      - key: FLASHMAX_ADMIN_KEY
+        generateValue: true
+      - key: SUPABASE_URL
         sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: FLASHMAX_NOWPAYMENTS_API_KEY
+        sync: false
+      - key: FLASHMAX_NOWPAYMENTS_IPN_SECRET
+        sync: false
+      - key: FLASHMAX_NOWPAYMENTS_IPN_CALLBACK_URL
+        value: https://flashmax.club/api/webhooks/nowpayments/flashmax
+      - key: FLASHMAX_PAYOUT_ADDRESS
+        sync: false
+      - key: FLASHMAX_PAYOUT_CURRENCY
+        value: usdtbsc
       - key: DATA_DIR
-        value: ./data
+        value: /var/data
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
+    disk:
+      name: flash-max-data
+      mountPath: /var/data
+      sizeGB: 1

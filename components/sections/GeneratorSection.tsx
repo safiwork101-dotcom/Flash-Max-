@@ -15,9 +15,14 @@ import {
   Zap,
   X,
 } from "lucide-react";
-import { FormEvent, useMemo, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import QRCode from "qrcode";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import type { FlashMaxOrder } from "@/lib/flashmax/payments";
 import { cn } from "@/lib/utils";
+import { flashMaxPaymentCurrencies } from "@/src/config/checkoutConfig";
 import { siteConfig } from "@/src/config/siteConfig";
 
 const useCaseIcons = [Shield, Monitor, Clock, Cpu, Users];
@@ -31,35 +36,35 @@ export function GeneratorSection() {
   const [address, setAddress] = useState("");
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
-  const [orderId, setOrderId] = useState("");
+  const [paymentOrder, setPaymentOrder] = useState<FlashMaxOrder | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState("");
   const [orderError, setOrderError] = useState("");
   const [copied, setCopied] = useState(false);
-  const [depositNotified, setDepositNotified] = useState(false);
-  const [isDepositNotifying, setIsDepositNotifying] = useState(false);
-  const [depositNotifyError, setDepositNotifyError] = useState("");
 
   const amount = siteConfig.generator.amountOptions[amountIndex];
   const duration = siteConfig.generator.durations[durationIndex];
   const network = siteConfig.generator.networks[networkIndex];
-  const selectedCurrency =
-    siteConfig.generator.paymentModal.currencies[currencyIndex];
-  const selectedPaymentAddress =
-    "paymentAddress" in selectedCurrency && selectedCurrency.paymentAddress
-      ? selectedCurrency.paymentAddress
-      : siteConfig.generator.paymentModal.paymentAddress;
-  const selectedQrImage =
-    "qrImage" in selectedCurrency && selectedCurrency.qrImage
-      ? selectedCurrency.qrImage
-      : siteConfig.generator.paymentModal.qrImage;
+  const selectedCurrency = flashMaxPaymentCurrencies[currencyIndex];
 
   const totalPrice = useMemo(
     () => Math.round(amount.price * duration.multiplier),
     [amount.price, duration.multiplier],
   );
-  const paymentAmount =
-    selectedCurrency.symbol === "BTC"
-      ? `$${totalPrice.toFixed(2)}`
-      : `${totalPrice.toFixed(2)} ${selectedCurrency.symbol}`;
+  const paymentAmount = paymentOrder?.pay_amount
+    ? `${paymentOrder.pay_amount} ${paymentOrder.pay_currency.toUpperCase()}`
+    : `$${totalPrice.toFixed(2)}`;
+
+  useEffect(() => {
+    if (!isPaymentOpen || !paymentOrder || ["finished", "failed", "refunded", "expired"].includes(paymentOrder.status)) return;
+
+    const checkStatus = async () => {
+      const response = await fetch(`/api/flashmax/payments/${encodeURIComponent(paymentOrder.id)}`, { cache: "no-store" });
+      const data = (await response.json().catch(() => ({}))) as { order?: FlashMaxOrder };
+      if (response.ok && data.order) setPaymentOrder(data.order);
+    };
+    const timer = window.setInterval(() => void checkStatus(), 8_000);
+    return () => window.clearInterval(timer);
+  }, [isPaymentOpen, paymentOrder]);
 
   const isAddressValid = validateAddress(address, network.type);
 
@@ -74,89 +79,34 @@ export function GeneratorSection() {
     setOrderError("");
 
     try {
-      const paymentCurrencyDisplay =
-        "displaySymbol" in selectedCurrency && selectedCurrency.displaySymbol
-          ? selectedCurrency.displaySymbol
-          : selectedCurrency.symbol;
-
-      const response = await fetch("/api/orders", {
+      const response = await fetch("/api/flashmax/payments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amountLabel: amount.label,
-          token: amount.token,
-          duration: duration.label,
-          priceUsd: totalPrice,
-          networkLabel: network.label,
-          networkShortLabel: network.shortLabel,
-          networkType: network.type,
+          packageId: amount.id,
+          targetNetworkId: network.id,
           targetAddress: address,
-          paymentCurrencyName: selectedCurrency.name,
-          paymentCurrencySymbol: selectedCurrency.symbol,
-          paymentCurrencyDisplay,
-          paymentAmount,
-          paymentAddress: selectedPaymentAddress,
+          payCurrency: selectedCurrency.id,
         }),
       });
+      const data = (await response.json().catch(() => ({}))) as { order?: FlashMaxOrder; error?: string };
+      if (!response.ok || !data.order) throw new Error(response.status === 401 ? "Log in to your account before creating a payment." : data.error ?? "Payment could not be created.");
 
-      if (!response.ok) {
-        throw new Error("Order could not be saved.");
-      }
-
-      const data = (await response.json()) as { order?: { id?: string } };
-      setOrderId(data.order?.id ?? "");
-      setDepositNotified(false);
-      setDepositNotifyError("");
+      setPaymentOrder(data.order);
+      setQrDataUrl(data.order.payment_address ? await QRCode.toDataURL(data.order.payment_address, { width: 360, margin: 1 }) : "");
       setIsPaymentOpen(true);
-    } catch {
-      setOrderError("Order could not be saved. Please try again.");
+    } catch (error) {
+      setOrderError(error instanceof Error ? error.message : "Payment could not be created. Please try again.");
     } finally {
       setIsCreatingOrder(false);
     }
   }
 
   async function copyPaymentAddress() {
-    await navigator.clipboard.writeText(selectedPaymentAddress);
+    if (!paymentOrder?.payment_address) return;
+    await navigator.clipboard.writeText(paymentOrder.payment_address);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
-  }
-
-  async function notifySystemOfDeposit() {
-    if (!orderId || isDepositNotifying) {
-      return;
-    }
-
-    setIsDepositNotifying(true);
-    setDepositNotifyError("");
-
-    try {
-      const paymentCurrencyDisplay =
-        "displaySymbol" in selectedCurrency && selectedCurrency.displaySymbol
-          ? selectedCurrency.displaySymbol
-          : selectedCurrency.symbol;
-
-      const response = await fetch(`/api/orders/${encodeURIComponent(orderId)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          paymentCurrencyName: selectedCurrency.name,
-          paymentCurrencySymbol: selectedCurrency.symbol,
-          paymentCurrencyDisplay,
-          paymentAmount,
-          paymentAddress: selectedPaymentAddress,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Request could not be sent.");
-      }
-
-      setDepositNotified(true);
-    } catch {
-      setDepositNotifyError("Request could not be sent. Please try again.");
-    } finally {
-      setIsDepositNotifying(false);
-    }
   }
 
   return (
@@ -211,7 +161,7 @@ export function GeneratorSection() {
                     onClick={() => {
                       setAmountIndex(index);
                       setIsPaymentOpen(false);
-                      setOrderId("");
+                      setPaymentOrder(null);
                       setOrderError("");
                     }}
                     className={cn(
@@ -257,7 +207,7 @@ export function GeneratorSection() {
                 onChange={(value) => {
                   setDurationIndex(value);
                   setIsPaymentOpen(false);
-                  setOrderId("");
+                  setPaymentOrder(null);
                   setOrderError("");
                 }}
                 options={siteConfig.generator.durations.map((item) => item.label)}
@@ -274,7 +224,7 @@ export function GeneratorSection() {
                   setNetworkIndex(value);
                   setAddress("");
                   setIsPaymentOpen(false);
-                  setOrderId("");
+                  setPaymentOrder(null);
                   setOrderError("");
                 }}
                 options={siteConfig.generator.networks.map((item) => item.label)}
@@ -295,7 +245,7 @@ export function GeneratorSection() {
                 onChange={(event) => {
                   setAddress(event.target.value.trim());
                   setIsPaymentOpen(false);
-                  setOrderId("");
+                  setPaymentOrder(null);
                   setOrderError("");
                 }}
                 placeholder={network.placeholder}
@@ -305,6 +255,22 @@ export function GeneratorSection() {
                 )}
               />
             </label>
+
+            <div>
+              <FieldLabel icon={<span className="font-mono text-xs">PAY</span>}>
+                Payment Currency
+              </FieldLabel>
+              <SelectBox
+                value={currencyIndex}
+                onChange={(value) => {
+                  setCurrencyIndex(value);
+                  setIsPaymentOpen(false);
+                  setPaymentOrder(null);
+                  setOrderError("");
+                }}
+                options={flashMaxPaymentCurrencies.map((currency) => currency.display)}
+              />
+            </div>
 
             <div className="rounded-lg border border-line bg-night/70 p-5">
               <SummaryRow
@@ -332,9 +298,10 @@ export function GeneratorSection() {
             </button>
 
             {orderError ? (
-              <p className="rounded-lg border border-coral/30 bg-coral/10 px-4 py-3 text-sm font-semibold text-coral">
-                {orderError}
-              </p>
+              <div className="rounded-lg border border-coral/30 bg-coral/10 px-4 py-3 text-sm font-semibold text-coral">
+                <p>{orderError}</p>
+                {orderError.startsWith("Log in") ? <Link href="/account" className="mt-2 inline-block font-black underline">Open customer account</Link> : null}
+              </div>
             ) : null}
 
             {!address ? null : isAddressValid ? (
@@ -349,7 +316,7 @@ export function GeneratorSection() {
           </div>
         </form>
 
-        {isPaymentOpen ? (
+        {isPaymentOpen && paymentOrder ? (
           <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 px-4 backdrop-blur-sm">
             <div className="max-h-[92vh] w-full max-w-[600px] overflow-y-auto rounded-lg border border-line bg-panel shadow-2xl">
               <div className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-panel/95 px-6 py-5 backdrop-blur">
@@ -368,11 +335,9 @@ export function GeneratorSection() {
 
               <div className="space-y-6 p-6">
                 <div className="rounded-lg border border-line bg-night/70 p-5">
-                  {orderId ? (
-                    <SummaryRow label="Order ID" value={shortenOrderId(orderId)} />
-                  ) : null}
+                  <SummaryRow label="Order ID" value={shortenOrderId(paymentOrder.order_code)} />
                   <SummaryRow
-                    label="Flash USDT Amount"
+                    label="FlashMax Credits Amount"
                     value={`${formatAmountLabel(amount.label)}.00 ${amount.token}`}
                     accent
                   />
@@ -391,24 +356,9 @@ export function GeneratorSection() {
 
                 <div>
                   <p className="mb-3 text-xs font-black tracking-[0.14em] text-white/48">
-                    {siteConfig.generator.paymentModal.currencyLabel}
+                    PAYMENT CURRENCY
                   </p>
-                  <SelectBox
-                    value={currencyIndex}
-                    onChange={(value) => {
-                      setCurrencyIndex(value);
-                      setDepositNotified(false);
-                      setDepositNotifyError("");
-                    }}
-                    options={siteConfig.generator.paymentModal.currencies.map(
-                      (currency) =>
-                        `${currency.name} (${
-                          "displaySymbol" in currency && currency.displaySymbol
-                            ? currency.displaySymbol
-                            : currency.symbol
-                        })`,
-                    )}
-                  />
+                  <div className="rounded-lg border border-line bg-night/70 px-5 py-4 font-black text-white">{selectedCurrency.display}</div>
                 </div>
 
                 <div className="rounded-lg border border-mint bg-night/70 p-5 text-center">
@@ -417,7 +367,7 @@ export function GeneratorSection() {
                   </p>
                   <p className="mt-3 text-3xl font-black text-mint">
                     <span className="mr-2 inline-grid size-8 place-items-center rounded-full bg-ember text-xs font-black text-night">
-                        {selectedCurrency.icon}
+                        {selectedCurrency.symbol}
                       </span>
                       {paymentAmount}
                   </p>
@@ -425,17 +375,11 @@ export function GeneratorSection() {
                     {siteConfig.generator.paymentModal.addressLabel}
                   </p>
 
-                  <div className="mx-auto mt-3 max-w-[420px] rounded-lg bg-white p-4">
-                    <img
-                      src={selectedQrImage}
-                      alt="Payment QR placeholder"
-                      className="mx-auto h-auto max-h-[220px] w-auto"
-                    />
-                  </div>
+                  {qrDataUrl ? <div className="mx-auto mt-3 max-w-[252px] rounded-lg bg-white p-4"><Image src={qrDataUrl} alt="NOWPayments deposit address QR code" width={220} height={220} unoptimized className="mx-auto size-[220px]" /></div> : null}
 
                   <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                     <code className="min-w-0 flex-1 break-all rounded-lg border border-line bg-black/40 px-4 py-3 text-left text-xs font-bold text-white/72">
-                      {selectedPaymentAddress}
+                      {paymentOrder.payment_address}
                     </code>
                     <button
                       type="button"
@@ -448,26 +392,10 @@ export function GeneratorSection() {
                         : siteConfig.generator.paymentModal.copyLabel}
                     </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={notifySystemOfDeposit}
-                    disabled={depositNotified || isDepositNotifying || !orderId}
-                    className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-mint bg-mint/10 px-4 text-sm font-black text-mint transition hover:bg-mint hover:text-night disabled:cursor-default disabled:bg-mint disabled:text-night"
-                  >
-                    {depositNotified ? (
-                      <Check className="size-4" />
-                    ) : null}
-                    {depositNotified
-                      ? "Request sent"
-                      : isDepositNotifying
-                        ? "Sending request..."
-                        : "Notify System Of Deposit"}
-                  </button>
-                  {depositNotifyError ? (
-                    <p className="mt-3 rounded-lg border border-coral/30 bg-coral/10 px-4 py-3 text-sm font-semibold text-coral">
-                      {depositNotifyError}
-                    </p>
-                  ) : null}
+                  <PaymentStatus order={paymentOrder} />
+                  <Link href="/account" className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg border border-mint bg-mint/10 px-4 text-sm font-black text-mint transition hover:bg-mint hover:text-night">
+                    Open account notifications
+                  </Link>
                 </div>
               </div>
             </div>
@@ -480,6 +408,7 @@ export function GeneratorSection() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function GeneratorInfoBlocks() {
   return (
     <div className="pt-10">
@@ -827,6 +756,21 @@ function shortenOrderId(id: string) {
   }
 
   return `${id.slice(0, 12)}...${id.slice(-4)}`;
+}
+
+function PaymentStatus({ order }: { order: FlashMaxOrder }) {
+  const remaining = Math.max(Number(order.pay_amount ?? 0) - Number(order.actually_paid ?? 0), 0);
+
+  if (order.status === "finished") {
+    return <p className="mt-4 rounded-lg border border-mint/30 bg-mint/10 px-4 py-3 text-sm font-black text-mint">Payment finished. Your first delivery update is now available in your account.</p>;
+  }
+  if (order.status === "partially_paid") {
+    return <p className="mt-4 rounded-lg border border-ember/30 bg-ember/10 px-4 py-3 text-sm font-black text-ember">Partial payment received. Send the remaining {remaining.toFixed(8).replace(/0+$/, "").replace(/\.$/, "")} {order.pay_currency.toUpperCase()} to complete the order.</p>;
+  }
+  if (["failed", "refunded", "expired"].includes(order.status)) {
+    return <p className="mt-4 rounded-lg border border-coral/30 bg-coral/10 px-4 py-3 text-sm font-black text-coral">Payment {order.status}. Open your account for order details.</p>;
+  }
+  return <p className="mt-4 rounded-lg border border-line bg-white/[0.03] px-4 py-3 text-sm font-black text-white/65">Status: {order.status.replaceAll("_", " ")}. This screen checks NOWPayments automatically.</p>;
 }
 
 function validateAddress(address: string, networkType: string) {

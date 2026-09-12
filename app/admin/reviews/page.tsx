@@ -1,7 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
-import { Trash2, Star, ShieldCheck } from "lucide-react";
+import { FormEvent, useState } from "react";
+import { RefreshCw, Trash2, Star, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Review = {
@@ -16,18 +16,43 @@ export default function AdminReviewsPage() {
   const [adminKey, setAdminKey] = useState("");
   const [reviews, setReviews] = useState<Review[]>([]);
   const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    void loadReviews();
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   async function loadReviews() {
+    if (!adminKey.trim()) {
+      setMessage("Admin key enter karo, phir reviews open honge.");
+      return;
+    }
+
     setIsLoading(true);
-    const response = await fetch("/api/reviews", { cache: "no-store" });
-    const data = (await response.json()) as { reviews?: Review[] };
-    setReviews(data.reviews ?? []);
-    setIsLoading(false);
+    setMessage("");
+
+    try {
+      const verifyResponse = await fetch("/api/flashmax/admin/dashboard", {
+        cache: "no-store",
+        headers: { "x-admin-key": adminKey },
+      });
+
+      if (!verifyResponse.ok) {
+        const verifyData = (await verifyResponse.json().catch(() => ({}))) as {
+          error?: string;
+        };
+        throw new Error(verifyData.error ?? "Invalid admin key.");
+      }
+
+      const response = await fetch("/api/reviews", { cache: "no-store" });
+      const data = (await response.json()) as { reviews?: Review[] };
+      setReviews(data.reviews ?? []);
+      setHasLoaded(true);
+      setMessage("Reviews loaded.");
+    } catch (error) {
+      setReviews([]);
+      setHasLoaded(false);
+      setMessage(error instanceof Error ? error.message : "Reviews open nahi hue.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   async function deleteReview(id: string) {
@@ -56,7 +81,7 @@ export default function AdminReviewsPage() {
 
   function handleKeySubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessage(adminKey ? "Admin key ready." : "Enter the admin key.");
+    void loadReviews();
   }
 
   return (
@@ -90,9 +115,13 @@ export default function AdminReviewsPage() {
           />
           <button
             type="submit"
-            className="h-12 rounded-lg bg-mint px-5 text-sm font-black text-night"
+            disabled={isLoading}
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-mint px-5 text-sm font-black text-night disabled:opacity-60"
           >
-            Use Key
+            <RefreshCw
+              className={cn("size-4", isLoading ? "animate-spin" : "")}
+            />
+            {isLoading ? "Checking..." : "Use Key"}
           </button>
         </form>
 
@@ -102,13 +131,22 @@ export default function AdminReviewsPage() {
           </p>
         ) : null}
 
-        <div className="space-y-4">
-          {isLoading ? (
-            <div className="rounded-lg border border-line bg-panel/90 p-5 text-sm text-white/54">
-              Loading reviews...
-            </div>
-          ) : (
-            reviews.map((review) => (
+        {!hasLoaded ? (
+          <div className="rounded-lg border border-line bg-panel/90 p-5 text-sm leading-6 text-white/54">
+            Admin key verify hone ke baad reviews moderation list show hogi.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {isLoading ? (
+              <div className="rounded-lg border border-line bg-panel/90 p-5 text-sm text-white/54">
+                Loading reviews...
+              </div>
+            ) : reviews.length === 0 ? (
+              <div className="rounded-lg border border-line bg-panel/90 p-5 text-sm text-white/54">
+                Abhi koi review nahi hai.
+              </div>
+            ) : (
+              reviews.map((review) => (
               <article
                 key={review.id}
                 className="rounded-lg border border-line bg-panel/90 p-5"
@@ -146,9 +184,10 @@ export default function AdminReviewsPage() {
                   {review.text}
                 </p>
               </article>
-            ))
-          )}
-        </div>
+              ))
+            )}
+          </div>
+        )}
       </div>
     </main>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { MessageSquare, Send, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/src/config/siteConfig";
@@ -23,11 +23,7 @@ export function ReviewsSection() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    void loadReviews();
-  }, []);
-
-  async function loadReviews() {
+  const loadReviews = useCallback(async () => {
     setIsLoading(true);
     setError("");
 
@@ -40,7 +36,13 @@ export function ReviewsSection() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    // Reviews are loaded from the public API after hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadReviews();
+  }, [loadReviews]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
