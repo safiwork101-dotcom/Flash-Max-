@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Bell, Check, Clock, ExternalLink, LogOut, RefreshCw, ShieldCheck, UserRound } from "lucide-react";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { SiteShell } from "@/components/SiteShell";
@@ -20,6 +21,7 @@ type Notification = {
 };
 
 export default function AccountPage() {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<FlashMaxOrder[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -72,7 +74,8 @@ export default function AccountPage() {
       if (!response.ok) throw new Error(data.error ?? "Authentication failed.");
       setUser(data.user ?? null);
       await loadAccount();
-      setMessage(mode === "signup" ? "Account created successfully." : "Welcome back.");
+      router.replace("/");
+      router.refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Authentication failed.");
     } finally {
