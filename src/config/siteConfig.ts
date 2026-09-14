@@ -52,8 +52,8 @@ export const siteConfig = {
     statusLabel: "Ready",
     amountLabel: "Select Credits",
     durationLabel: "Visibility Duration",
-    networkLabel: "Select Network",
-    targetAddressLabel: "Target Address",
+    networkLabel: "Credits Delivery Network",
+    targetAddressLabel: "Credits Delivery Address",
     targetAddressHelp: "0x... (42 chars)",
     targetAddressPlaceholder: "0x...",
     summaryLabels: {
