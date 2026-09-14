@@ -771,7 +771,7 @@ function PaymentStatus({ order }: { order: FlashMaxOrder }) {
     return <p className="mt-4 rounded-lg border border-coral/30 bg-coral/10 px-4 py-3 text-sm font-black text-coral">Payment {order.status}. Open your account for order details.</p>;
   }
   if (order.status === "waiting") {
-    return <p className="mt-4 rounded-lg border border-line bg-white/[0.03] px-4 py-3 text-sm font-black text-white/65">Payment pending. Send the exact amount shown above to continue.</p>;
+    return <p className="mt-4 rounded-lg border border-line bg-white/[0.03] px-4 py-3 text-sm font-black text-white/65">Waiting for payment confirmation.</p>;
   }
   if (order.status === "confirming") {
     return <p className="mt-4 rounded-lg border border-line bg-white/[0.03] px-4 py-3 text-sm font-black text-white/65">Payment received. Confirmation is in progress.</p>;
